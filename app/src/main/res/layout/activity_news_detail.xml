@@ -10,14 +10,14 @@
     tools:context=".Activities.NewsDetailActivity">
 
     <android.support.design.widget.AppBarLayout
-        android:id="@+id/appbar"
+        android:id="@+id/appBarLayoutND"
         android:layout_width="match_parent"
         android:layout_height="250dp"
         android:fitsSystemWindows="true"
         android:theme="@style/MyAppBarLayoutTheme">
 
         <android.support.design.widget.CollapsingToolbarLayout
-            android:id="@+id/collapsing_toolbar"
+            android:id="@+id/collapsingToolBarLayoutND"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:fitsSystemWindows="true"
@@ -26,7 +26,7 @@
             app:titleEnabled="false">
 
             <ImageView
-                android:id="@+id/backdrop"
+                android:id="@+id/imageViewND"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:fitsSystemWindows="true"
@@ -36,7 +36,7 @@
                 tools:ignore="UnusedAttribute" />
 
             <RelativeLayout
-                android:id="@+id/headerContent"
+                android:id="@+id/relativeLayoutND"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:layout_centerInParent="true"
@@ -51,7 +51,7 @@
                     android:src="@drawable/top_shadow" />
 
                 <ImageView
-                    android:id="@+id/img2"
+                    android:id="@+id/imageViewNDTwo"
                     android:layout_width="match_parent"
                     android:layout_height="80dp"
                     android:layout_alignBottom="@id/imageViewNews"
@@ -62,7 +62,7 @@
             </RelativeLayout>
 
             <android.support.v7.widget.Toolbar
-                android:id="@+id/toolbar"
+                android:id="@+id/toolBarND"
                 android:layout_width="match_parent"
                 android:layout_height="?attr/actionBarSize"
                 android:contentInsetStart="0dp"
@@ -73,14 +73,14 @@
                 app:popupTheme="@style/ThemeOverlay.AppCompat.Light">
 
                 <LinearLayout
-                    android:id="@+id/title_appbar"
+                    android:id="@+id/linerLayoutND"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:clickable="false"
                     android:orientation="vertical">
 
                     <TextView
-                        android:id="@+id/title_on_appbar"
+                        android:id="@+id/textViewNDNTitle"
                         style="@style/Base.TextAppearance.AppCompat.Widget.ActionBar.Title"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
@@ -89,10 +89,10 @@
                         android:maxLines="1"
                         android:singleLine="true"
                         android:text="News for you"
-                        android:textSize="18dp" />
+                        android:textSize="18sp" />
 
                     <TextView
-                        android:id="@+id/subtitle_on_appbar"
+                        android:id="@+id/textViewNDNSubtitle"
                         style="@style/Base.TextAppearance.AppCompat.Widget.ActionBar.Subtitle"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
@@ -101,7 +101,7 @@
                         android:maxLines="1"
                         android:singleLine="true"
                         android:text="Subtitle"
-                        android:textSize="12dp" />
+                        android:textSize="12sp" />
 
                 </LinearLayout>
 
@@ -139,7 +139,7 @@
                     android:paddingRight="16dp">
 
                     <TextView
-                        android:id="@+id/title"
+                        android:id="@+id/textViewNDTitle"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:fontFamily="sans-serif-light"
@@ -149,10 +149,10 @@
                         android:textStyle="bold" />
 
                     <TextView
-                        android:id="@+id/time"
+                        android:id="@+id/textViewNDTime"
                         android:layout_width="wrap_content"
                         android:layout_height="20dp"
-                        android:layout_below="@id/title"
+                        android:layout_below="@id/textViewTitle"
                         android:layout_marginTop="10dp"
                         android:drawablePadding="10dp"
                         android:ellipsize="end"
@@ -161,6 +161,7 @@
                         android:text="a time ago" />
 
                 </RelativeLayout>
+
             </android.support.v7.widget.CardView>
 
             <android.support.v7.widget.CardView
@@ -177,7 +178,7 @@
                     android:layout_height="match_parent">
 
                     <ProgressBar
-                        android:id="@+id/progress_bar"
+                        android:id="@+id/progressBarND"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:layout_marginTop="50dp"
@@ -185,7 +186,7 @@
                         app:layout_behavior="@string/appbar_scrolling_view_behavior" />
 
                     <WebView
-                        android:id="@+id/webView"
+                        android:id="@+id/webViewND"
                         android:layout_width="match_parent"
                         android:layout_height="match_parent"
                         app:layout_behavior="@string/appbar_scrolling_view_behavior" />
@@ -200,19 +201,19 @@
     </android.support.v4.widget.NestedScrollView>
 
     <FrameLayout
-        android:id="@+id/date_behavior"
+        android:id="@+id/frameLayoutND"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_below="@id/imageViewNews"
-        android:layout_alignParentRight="true"
+        android:layout_alignParentEnd="true"
         android:layout_alignParentBottom="true"
-        android:layout_marginRight="20dp"
+        android:layout_marginEnd="20dp"
         android:layout_marginBottom="410dp"
         android:adjustViewBounds="true"
         android:background="@drawable/round_white"
         android:clickable="false"
         android:padding="5dp"
-        app:layout_anchor="@+id/appbar"
+        app:layout_anchor="@+id/appBarLayoutND"
         app:layout_anchorGravity="right|end|bottom"
         tools:ignore="UnusedAttribute">
 
@@ -224,13 +225,14 @@
             android:src="@drawable/ic_date" />
 
         <TextView
-            android:id="@+id/date"
+            android:id="@+id/textViewNDDate"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginLeft="27dp"
-            android:layout_marginRight="10dp"
+            android:layout_marginStart="27dp"
+            android:layout_marginEnd="10dp"
             android:text="01 January 1990"
             android:textColor="#606060" />
+
     </FrameLayout>
 
 </android.support.design.widget.CoordinatorLayout>

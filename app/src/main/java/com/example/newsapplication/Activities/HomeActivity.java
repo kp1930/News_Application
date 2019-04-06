@@ -2,7 +2,13 @@ package com.example.newsapplication.Activities;
 
 import android.app.SearchManager;
 import android.content.Context;
+import android.content.Intent;
+import android.os.Build;
 import android.os.Bundle;
+import android.support.v4.app.ActivityCompat;
+import android.support.v4.app.ActivityOptionsCompat;
+import android.support.v4.util.Pair;
+import android.support.v4.view.ViewCompat;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.DefaultItemAnimator;
@@ -13,6 +19,7 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.support.v7.widget.SearchView;
 import android.view.View;
+import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -35,7 +42,7 @@ public class HomeActivity extends AppCompatActivity implements SwipeRefreshLayou
 
     public static final String API_KEY = "715c6e9621ba41cdb999aedd36675eb6";
     private RecyclerView rvHome;
-    private RecyclerView.LayoutManager layoutManager;
+    RecyclerView.LayoutManager layoutManager;
     private List<Article> articles = new ArrayList<>();
     private NewsAdapter newsAdapter;
     private String TAG = HomeActivity.class.getSimpleName();
@@ -88,6 +95,9 @@ public class HomeActivity extends AppCompatActivity implements SwipeRefreshLayou
                     newsAdapter = new NewsAdapter(articles, HomeActivity.this);
                     rvHome.setAdapter(newsAdapter);
                     newsAdapter.notifyDataSetChanged();
+
+                    initListner();
+
                     tvTopHeadLines.setVisibility(View.VISIBLE);
                     sRLHome.setRefreshing(false);
 
@@ -101,6 +111,34 @@ public class HomeActivity extends AppCompatActivity implements SwipeRefreshLayou
             public void onFailure(Call<News> call, Throwable t) {
                 tvTopHeadLines.setVisibility(View.INVISIBLE);
                 sRLHome.setRefreshing(false);
+            }
+        });
+    }
+
+    private void initListner() {
+        newsAdapter.setOnItemClickListener(new NewsAdapter.OnItemClickListener() {
+            @Override
+            public void onItemClick(View view, int position) {
+                ImageView imageView = view.findViewById(R.id.imageViewNews);
+
+                Intent intent = new Intent(HomeActivity.this, NewsDetailActivity.class);
+
+                Article article = articles.get(position);
+                intent.putExtra("url", article.getUrl());
+                intent.putExtra("author", article.getAuthor());
+                intent.putExtra("title", article.getTitle());
+                intent.putExtra("image",article.getUrlToImage());
+                intent.putExtra("date", article.getPublishedAt());
+                intent.putExtra("source",article.getSource().getName());
+
+                Pair<View, String> pair = Pair.create((View)imageView, ViewCompat.getTransitionName(imageView));
+                ActivityOptionsCompat optionsCompat = ActivityOptionsCompat.makeSceneTransitionAnimation(HomeActivity.this,pair);
+
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
+                    startActivity(intent, optionsCompat.toBundle());
+                } else {
+                    startActivity(intent);
+                }
             }
         });
     }
