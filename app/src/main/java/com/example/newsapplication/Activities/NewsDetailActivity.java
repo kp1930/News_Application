@@ -1,12 +1,14 @@
 package com.example.newsapplication.Activities;
 
 import android.content.Intent;
+import android.net.Uri;
+import android.os.Bundle;
 import android.support.design.widget.AppBarLayout;
 import android.support.design.widget.CollapsingToolbarLayout;
 import android.support.v7.app.AppCompatActivity;
-import android.os.Bundle;
-import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
@@ -14,6 +16,7 @@ import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.resource.drawable.DrawableTransitionOptions;
@@ -23,14 +26,14 @@ import com.example.newsapplication.Utility.Utils;
 
 public class NewsDetailActivity extends AppCompatActivity implements AppBarLayout.OnOffsetChangedListener {
 
-    private ImageView ivND;
-    private TextView tvNDNTitle, tvNDSNubTitle, tvNDTime, tvNDTitle, tvNDDate;
+    ImageView ivND;
+    TextView tvNDNTitle, tvNDSNubTitle, tvNDTime, tvNDTitle, tvNDDate;
     private boolean isHideToolbarView = false;
     private FrameLayout fLayoutND;
     private LinearLayout lLayoutND;
     private AppBarLayout abLayoutND;
-    private Toolbar tbND;
-    private String url, image, title, date, source, author;
+    Toolbar tbND;
+    String url, image, title, date, source, author;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -66,7 +69,6 @@ public class NewsDetailActivity extends AppCompatActivity implements AppBarLayou
 
         RequestOptions requestOptions = new RequestOptions();
         requestOptions.error(Utils.getRandomDrawbleColor());
-
         Glide.with(this).load(image).apply(requestOptions).transition(DrawableTransitionOptions.withCrossFade()).into(ivND);
 
         tvNDNTitle.setText(source);
@@ -80,7 +82,6 @@ public class NewsDetailActivity extends AppCompatActivity implements AppBarLayou
 
         tvNDTime.setText(source + mAuthor + "\u2022" + Utils.DateToTimeFormat(date));
         initWebView(url);
-
     }
 
     private void initWebView (String url) {
@@ -110,6 +111,7 @@ public class NewsDetailActivity extends AppCompatActivity implements AppBarLayou
 
     @Override
     public void onOffsetChanged(AppBarLayout appBarLayout, int i) {
+
         int maxScroll = abLayoutND.getTotalScrollRange();
         float percentage = (float) Math.abs(i) / (float) maxScroll;
 
@@ -122,5 +124,36 @@ public class NewsDetailActivity extends AppCompatActivity implements AppBarLayou
             lLayoutND.setVisibility(View.GONE);
             isHideToolbarView = !isHideToolbarView;
         }
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.share_menu, menu);
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+
+        int id = item.getItemId();
+
+        if (id == R.id.action_browser) {
+          Intent intent = new Intent(Intent.ACTION_SEND);
+          intent.setData(Uri.parse(url));
+          startActivity(intent);
+          return true;
+        } else if (id == R.id.action_share) {
+             try {
+                 Intent intent = new Intent(Intent.ACTION_SEND);
+                 intent.setType("text/plan");
+                 intent.putExtra(Intent.EXTRA_SUBJECT, source);
+                 String body = title + "\n" + url + "\n" + "Share from the News Application" + "\n";
+                 intent.putExtra(Intent.EXTRA_TEXT, body);
+                 startActivity(Intent.createChooser(intent, "Share with : "));
+             } catch (Exception e) {
+                 Toast.makeText(NewsDetailActivity.this, "Hmm... Sorry, \nCannot be share",Toast.LENGTH_SHORT).show();
+             }
+        }
+        return super.onOptionsItemSelected(item);
     }
 }

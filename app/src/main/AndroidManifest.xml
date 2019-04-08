@@ -13,7 +13,9 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
 
-        <activity android:name=".Activities.NewsDetailActivity" android:theme="@style/AppTheme.NoActionBar"/>
+        <activity
+            android:name=".Activities.NewsDetailActivity"
+            android:theme="@style/AppTheme.NoActionBar"/>
         <activity android:name=".Activities.HomeActivity">
 
             <intent-filter>

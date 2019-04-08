@@ -19,7 +19,9 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.support.v7.widget.SearchView;
 import android.view.View;
+import android.widget.Button;
 import android.widget.ImageView;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -48,6 +50,10 @@ public class HomeActivity extends AppCompatActivity implements SwipeRefreshLayou
     private String TAG = HomeActivity.class.getSimpleName();
     private SwipeRefreshLayout sRLHome;
     private TextView tvTopHeadLines;
+    private RelativeLayout rlEP;
+    private ImageView ivError;
+    private TextView tvErrorMessage, tvErrorTitle;
+    private Button btnRetry;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -67,11 +73,17 @@ public class HomeActivity extends AppCompatActivity implements SwipeRefreshLayou
         rvHome.setNestedScrollingEnabled(false);
 
         onLoadingSwipeRefresh("");
+
+        rlEP = findViewById(R.id.relativeLayoutPE);
+        ivError = findViewById(R.id.imageViewError);
+        tvErrorTitle = findViewById(R.id.textViewErrorTitle);
+        tvErrorMessage = findViewById(R.id.textViewErrorMessage);
+        btnRetry = findViewById(R.id.buttonRetry);
     }
 
     public void loadJson(final String keyword) {
 
-        tvTopHeadLines.setVisibility(View.INVISIBLE);
+        rlEP.setVisibility(View.GONE);
         sRLHome.setRefreshing(true);
 
         ApiInterface apiInterface = ApiClient.getApiClient().create(ApiInterface.class);
@@ -80,17 +92,15 @@ public class HomeActivity extends AppCompatActivity implements SwipeRefreshLayou
 
         Call<News> call;
 
-        if (keyword.length() > 0)
-            call = apiInterface.getNewsSearch(keyword, language, "publishAt", API_KEY);
-        else
-            call = apiInterface.getNews(country, API_KEY);
+        if (keyword.length() > 0) call = apiInterface.getNewsSearch(keyword, language, "publishAt", API_KEY);
+        else call = apiInterface.getNews(country, API_KEY);
 
         call.enqueue(new Callback<News>() {
             @Override
             public void onResponse(Call<News> call, Response<News> response) {
                 if ((response.isSuccessful()) && (response.body().getArticles() != null)) {
-                    if (!articles.isEmpty())
-                        articles.clear();
+                    if (!articles.isEmpty()) articles.clear();
+
                     articles = response.body().getArticles();
                     newsAdapter = new NewsAdapter(articles, HomeActivity.this);
                     rvHome.setAdapter(newsAdapter);
@@ -104,13 +114,29 @@ public class HomeActivity extends AppCompatActivity implements SwipeRefreshLayou
                 } else {
                     tvTopHeadLines.setVisibility(View.INVISIBLE);
                     sRLHome.setRefreshing(false);
-                    Toast.makeText(HomeActivity.this, "No Result!", Toast.LENGTH_SHORT).show();
+
+                    String errorCode;
+                    switch (response.code()) {
+                        case 404:
+                            errorCode = "404 Not Found";
+                            break;
+                        case 500:
+                            errorCode = "505 Server Broken";
+                            break;
+                        default:
+                            errorCode = "Unknown Error";
+                            break;
+                    }
+
+                    showErrorMessage(R.drawable.no_result, "No Result", "Please try again!\n" + errorCode);
                 }
             }
+
             @Override
             public void onFailure(Call<News> call, Throwable t) {
                 tvTopHeadLines.setVisibility(View.INVISIBLE);
                 sRLHome.setRefreshing(false);
+                showErrorMessage(R.drawable.no_result, "Oops...", "Network Failure, Please try again\n" + t.toString());
             }
         });
     }
@@ -134,7 +160,7 @@ public class HomeActivity extends AppCompatActivity implements SwipeRefreshLayou
                 Pair<View, String> pair = Pair.create((View)imageView, ViewCompat.getTransitionName(imageView));
                 ActivityOptionsCompat optionsCompat = ActivityOptionsCompat.makeSceneTransitionAnimation(HomeActivity.this,pair);
 
-                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
                     startActivity(intent, optionsCompat.toBundle());
                 } else {
                     startActivity(intent);
@@ -178,6 +204,21 @@ public class HomeActivity extends AppCompatActivity implements SwipeRefreshLayou
             @Override
             public void run() {
                 loadJson(keywod);
+            }
+        });
+    }
+
+    private void showErrorMessage (int imageView, String title, String message) {
+        if (rlEP.getVisibility() == View.GONE) rlEP.setVisibility(View.VISIBLE);
+
+        ivError.setImageResource(imageView);
+        tvErrorTitle.setText(title);
+        tvErrorMessage.setText(message);
+
+        btnRetry.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                onLoadingSwipeRefresh("");
             }
         });
     }
